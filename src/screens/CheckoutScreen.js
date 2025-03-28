@@ -8,9 +8,9 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
-  Image
+  Image,
+  StatusBar
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CheckoutScreen = ({ route, navigation }) => {
   const { cartItems = [], totalAmount = 0 } = route.params || {};
@@ -169,7 +169,8 @@ const CheckoutScreen = ({ route, navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#4CAF50" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Checkout</Text>
       </View>
@@ -182,7 +183,7 @@ const CheckoutScreen = ({ route, navigation }) => {
           </>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

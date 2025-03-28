@@ -6,9 +6,9 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  Alert
+  Alert,
+  StatusBar
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const CartScreen = ({ route, navigation }) => {
   const { cartItems = [] } = route.params || {};
@@ -86,7 +86,8 @@ const CartScreen = ({ route, navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#4CAF50" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Your Cart</Text>
         <Text style={styles.itemCount}>{items.length} items</Text>
@@ -141,7 +142,7 @@ const CartScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };
 

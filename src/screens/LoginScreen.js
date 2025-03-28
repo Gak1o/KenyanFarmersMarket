@@ -9,9 +9,9 @@ import {
   KeyboardAvoidingView, 
   Platform,
   ScrollView,
-  Alert
+  Alert,
+  StatusBar
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -34,104 +34,103 @@ const LoginScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.header}>
-            <Image
-              source={{ uri: 'https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80' }}
-              style={styles.headerImage}
-              resizeMode="cover"
-            />
-            <View style={styles.overlay}>
-              <Text style={styles.logoText}>MkulimaConnect</Text>
-              <Text style={styles.tagline}>Connecting Farmers and Buyers</Text>
-            </View>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.header}>
+          <Image
+            source={{ uri: 'https://images.unsplash.com/photo-1495107334309-fcf20504a5ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80' }}
+            style={styles.headerImage}
+            resizeMode="cover"
+          />
+          <View style={styles.overlay}>
+            <Text style={styles.logoText}>MkulimaConnect</Text>
+            <Text style={styles.tagline}>Connecting Farmers and Buyers</Text>
           </View>
+        </View>
 
-          <View style={styles.formContainer}>
-            <Text style={styles.loginTitle}>Login</Text>
+        <View style={styles.formContainer}>
+          <Text style={styles.loginTitle}>Login</Text>
             
-            <View style={styles.userTypeSelector}>
-              <TouchableOpacity
+          <View style={styles.userTypeSelector}>
+            <TouchableOpacity
+              style={[
+                styles.userTypeButton,
+                userType === 'buyer' && styles.activeUserType
+              ]}
+              onPress={() => setUserType('buyer')}
+            >
+              <Text
                 style={[
-                  styles.userTypeButton,
-                  userType === 'buyer' && styles.activeUserType
+                  styles.userTypeText,
+                  userType === 'buyer' && styles.activeUserTypeText
                 ]}
-                onPress={() => setUserType('buyer')}
               >
-                <Text
-                  style={[
-                    styles.userTypeText,
-                    userType === 'buyer' && styles.activeUserTypeText
-                  ]}
-                >
-                  I'm a Buyer
-                </Text>
-              </TouchableOpacity>
+                I'm a Buyer
+              </Text>
+            </TouchableOpacity>
               
-              <TouchableOpacity
+            <TouchableOpacity
+              style={[
+                styles.userTypeButton,
+                userType === 'farmer' && styles.activeUserType
+              ]}
+              onPress={() => setUserType('farmer')}
+            >
+              <Text
                 style={[
-                  styles.userTypeButton,
-                  userType === 'farmer' && styles.activeUserType
+                  styles.userTypeText,
+                  userType === 'farmer' && styles.activeUserTypeText
                 ]}
-                onPress={() => setUserType('farmer')}
               >
-                <Text
-                  style={[
-                    styles.userTypeText,
-                    userType === 'farmer' && styles.activeUserTypeText
-                  ]}
-                >
-                  I'm a Farmer
-                </Text>
-              </TouchableOpacity>
-            </View>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Email</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your email"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.inputLabel}>Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-            </View>
-            
-            <TouchableOpacity style={styles.forgotPassword}>
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                I'm a Farmer
+              </Text>
             </TouchableOpacity>
-            
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
-            
-            <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-                <Text style={styles.registerLink}>Register</Text>
-              </TouchableOpacity>
-            </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Email</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+            
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
+            
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+          </TouchableOpacity>
+            
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+            
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+              <Text style={styles.registerLink}>Register</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -139,9 +138,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-  },
-  keyboardAvoidingView: {
-    flex: 1,
   },
   scrollContainer: {
     flexGrow: 1,

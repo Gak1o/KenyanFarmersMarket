@@ -12,8 +12,6 @@ import {
   Modal,
   Alert
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
 
 const HomeScreen = ({ route, navigation }) => {
   // Get user type and name from login screen or default to buyer
@@ -26,8 +24,7 @@ const HomeScreen = ({ route, navigation }) => {
     name: '',
     price: '',
     quantity: '',
-    category: 'Vegetables',
-    image: null
+    category: 'Vegetables'
   });
 
   // Clear cart if coming back from checkout
@@ -36,52 +33,6 @@ const HomeScreen = ({ route, navigation }) => {
       setCartItems([]);
     }
   }, [cartCleared]);
-
-  // Request permission for image picker
-  useEffect(() => {
-    (async () => {
-      if (userType === 'farmer') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to upload images!');
-        }
-      }
-    })();
-  }, [userType]);
-
-  // Pick image from gallery
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setNewProduct({...newProduct, image: result.assets[0].uri});
-    }
-  };
-
-  // Take photo with camera
-  const takePhoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    
-    if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Sorry, we need camera permissions to take photos!');
-      return;
-    }
-
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setNewProduct({...newProduct, image: result.assets[0].uri});
-    }
-  };
 
   // Mock data for market prices
   const marketPrices = [
@@ -176,9 +127,18 @@ const HomeScreen = ({ route, navigation }) => {
       return;
     }
 
-    if (!newProduct.image) {
-      Alert.alert('Error', 'Please add an image of your product');
-      return;
+    // Get placeholder image based on category
+    let placeholderImage = 'https://images.unsplash.com/photo-1607305387299-a3d9611cd469?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80';
+    
+    // Select appropriate placeholder image based on category
+    if (newProduct.category === 'Vegetables') {
+      placeholderImage = 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80';
+    } else if (newProduct.category === 'Fruits') {
+      placeholderImage = 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80';
+    } else if (newProduct.category === 'Cereals') {
+      placeholderImage = 'https://images.unsplash.com/photo-1551754655-cd27e38d2076?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80';
+    } else if (newProduct.category === 'Dairy') {
+      placeholderImage = 'https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1374&q=80';
     }
 
     const newProductObj = {
@@ -188,7 +148,7 @@ const HomeScreen = ({ route, navigation }) => {
       farmer: userName, // Use the logged-in user's name
       location: 'Your Location',
       category: newProduct.category,
-      image: newProduct.image,
+      image: placeholderImage,
       description: 'Newly listed product',
       quantity: `${newProduct.quantity} available`
     };
@@ -198,8 +158,7 @@ const HomeScreen = ({ route, navigation }) => {
       name: '',
       price: '',
       quantity: '',
-      category: 'Vegetables',
-      image: null
+      category: 'Vegetables'
     });
     setShowAddProductModal(false);
     Alert.alert('Success', 'Product added successfully!');
@@ -265,7 +224,7 @@ const HomeScreen = ({ route, navigation }) => {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
       
       {/* Header */}
@@ -390,121 +349,73 @@ const HomeScreen = ({ route, navigation }) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <ScrollView>
-              <Text style={styles.modalTitle}>Add New Product</Text>
-              
-              {/* Image Selection Section */}
-              <View style={styles.imageSelectionContainer}>
-                {newProduct.image ? (
-                  <View style={styles.selectedImageContainer}>
-                    <Image 
-                      source={{ uri: newProduct.image }} 
-                      style={styles.selectedImage}
-                    />
-                    <TouchableOpacity 
-                      style={styles.changeImageButton}
-                      onPress={() => setNewProduct({...newProduct, image: null})}
-                    >
-                      <Text style={styles.changeImageText}>Change Image</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View style={styles.imageButtonsContainer}>
-                    <Text style={styles.imageSelectionTitle}>Add Product Image</Text>
-                    <View style={styles.imageButtonsRow}>
-                      <TouchableOpacity 
-                        style={styles.imageButton}
-                        onPress={pickImage}
-                      >
-                        <Text style={styles.imageButtonText}>Choose from Gallery</Text>
-                      </TouchableOpacity>
-                      
-                      <TouchableOpacity 
-                        style={styles.imageButton}
-                        onPress={takePhoto}
-                      >
-                        <Text style={styles.imageButtonText}>Take Photo</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                )}
-              </View>
-              
-              <Text style={styles.inputLabel}>Product Name</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter product name"
-                value={newProduct.name}
-                onChangeText={(text) => setNewProduct({...newProduct, name: text})}
-              />
-              
-              <Text style={styles.inputLabel}>Price (KES)</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter price"
-                value={newProduct.price}
-                onChangeText={(text) => setNewProduct({...newProduct, price: text})}
-                keyboardType="numeric"
-              />
-              
-              <Text style={styles.inputLabel}>Quantity</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter quantity (e.g., 50 kg)"
-                value={newProduct.quantity}
-                onChangeText={(text) => setNewProduct({...newProduct, quantity: text})}
-              />
-              
-              <Text style={styles.inputLabel}>Category</Text>
-              <View style={styles.categorySelector}>
-                {categories.slice(1).map(category => (
-                  <TouchableOpacity
-                    key={category.id}
-                    style={[
-                      styles.categorySelectorItem,
-                      newProduct.category === category.name && styles.selectedCategorySelectorItem
-                    ]}
-                    onPress={() => setNewProduct({...newProduct, category: category.name})}
-                  >
-                    <Text style={[
-                      styles.categorySelectorText,
-                      newProduct.category === category.name && styles.selectedCategorySelectorText
-                    ]}>
-                      {category.name}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              
-              <View style={styles.modalButtons}>
-                <TouchableOpacity 
-                  style={styles.cancelButton}
-                  onPress={() => {
-                    setNewProduct({
-                      name: '',
-                      price: '',
-                      quantity: '',
-                      category: 'Vegetables',
-                      image: null
-                    });
-                    setShowAddProductModal(false);
-                  }}
+            <Text style={styles.modalTitle}>Add New Product</Text>
+            
+            <Text style={styles.inputLabel}>Product Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter product name"
+              value={newProduct.name}
+              onChangeText={(text) => setNewProduct({...newProduct, name: text})}
+            />
+            
+            <Text style={styles.inputLabel}>Price (KES)</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter price"
+              value={newProduct.price}
+              onChangeText={(text) => setNewProduct({...newProduct, price: text})}
+              keyboardType="numeric"
+            />
+            
+            <Text style={styles.inputLabel}>Quantity</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter quantity (e.g., 50 kg)"
+              value={newProduct.quantity}
+              onChangeText={(text) => setNewProduct({...newProduct, quantity: text})}
+            />
+            
+            <Text style={styles.inputLabel}>Category</Text>
+            <View style={styles.categorySelector}>
+              {categories.slice(1).map(category => (
+                <TouchableOpacity
+                  key={category.id}
+                  style={[
+                    styles.categorySelectorItem,
+                    newProduct.category === category.name && styles.selectedCategorySelectorItem
+                  ]}
+                  onPress={() => setNewProduct({...newProduct, category: category.name})}
                 >
-                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                  <Text style={[
+                    styles.categorySelectorText,
+                    newProduct.category === category.name && styles.selectedCategorySelectorText
+                  ]}>
+                    {category.name}
+                  </Text>
                 </TouchableOpacity>
-                
-                <TouchableOpacity 
-                  style={styles.addButton}
-                  onPress={addNewProduct}
-                >
-                  <Text style={styles.addButtonText}>Add Product</Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
+              ))}
+            </View>
+            
+            <View style={styles.modalButtons}>
+              <TouchableOpacity 
+                style={styles.cancelButton}
+                onPress={() => setShowAddProductModal(false)}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity 
+                style={styles.addButton}
+                onPress={addNewProduct}
+              >
+                <Text style={styles.addButtonText}>Add Product</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -512,6 +423,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
+    paddingTop: StatusBar.currentHeight || 0,
   },
   header: {
     backgroundColor: 'white',
@@ -760,62 +672,6 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
   },
-  // Image selection styles
-  imageSelectionContainer: {
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  imageSelectionTitle: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  imageButtonsContainer: {
-    width: '100%',
-    alignItems: 'center',
-  },
-  imageButtonsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  imageButton: {
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-    alignItems: 'center',
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  imageButtonText: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  selectedImageContainer: {
-    alignItems: 'center',
-    width: '100%',
-  },
-  selectedImage: {
-    width: 200,
-    height: 150,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  changeImageButton: {
-    backgroundColor: '#f0f0f0',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 8,
-  },
-  changeImageText: {
-    color: '#333',
-    fontSize: 14,
-    fontWeight: '500',
-  },
   inputLabel: {
     fontSize: 14,
     fontWeight: '500',
@@ -883,7 +739,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: '500',
-  },
+  }
 });
 
 export default HomeScreen;

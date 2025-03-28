@@ -4,9 +4,9 @@ import {
   Text, 
   StyleSheet, 
   TouchableOpacity, 
-  ImageBackground 
+  ImageBackground,
+  StatusBar
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 const LandingScreen = ({ navigation }) => {
   return (
@@ -14,7 +14,8 @@ const LandingScreen = ({ navigation }) => {
       source={{ uri: 'https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80' }}
       style={styles.backgroundImage}
     >
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
+        <StatusBar translucent backgroundColor="transparent" barStyle="light-content" />
         <View style={styles.overlay}>
           <View style={styles.contentContainer}>
             <Text style={styles.title}>Kenyan Farmers Market</Text>
@@ -28,7 +29,7 @@ const LandingScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      </SafeAreaView>
+      </View>
     </ImageBackground>
   );
 };
